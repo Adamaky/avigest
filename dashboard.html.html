@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1B3A2D">
+<title>AviGest — Mon espace</title>
+<style>
+:root{--primary:#1B3A2D;--gold:#C9A84C;--red:#C0392B;--green:#1A7A4A;--orange:#D35400;
+  --red-bg:#FDECEA;--red-t:#922B21;--green-bg:#E9F7EF;--green-t:#145A35;
+  --orange-bg:#FEF0E6;--gray:#F4F4F4;--border:#E0E0E0;--white:#FFF;
+  --font:'Segoe UI',system-ui,sans-serif;--radius:12px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:var(--gray);color:#222;min-height:100vh}
+.topbar{background:var(--primary);padding:.85rem 1rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-logo{font-size:1rem;font-weight:800;color:var(--gold)}
+.topbar-sub{font-size:.72rem;color:#9fc;margin-top:1px}
+.user-av{background:var(--gold);color:var(--primary);border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;cursor:pointer}
+.container{max-width:700px;margin:0 auto;padding:1rem}
+.card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:1rem;margin-bottom:.75rem}
+.card-title{font-size:.78rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.85rem}
+.tab-bar{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
+.tab{padding:6px 14px;border-radius:20px;font-size:.8rem;cursor:pointer;border:1px solid var(--border);background:var(--white);color:#666;font-weight:500}
+.tab.on{background:var(--primary);color:white;border-color:transparent}
+.section{display:none}.section.active{display:block}
+.ferme-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:.65rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .15s}
+.ferme-card:hover{border-color:var(--primary);background:#f0f7f4}
+.ferme-name{font-weight:700;font-size:.95rem;color:var(--primary)}
+.ferme-loc{font-size:.75rem;color:#888;margin-top:2px}
+.badge{font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:12px}
+.badge-g{background:var(--green-bg);color:var(--green-t)}
+.badge-r{background:var(--red-bg);color:var(--red-t)}
+.badge-o{background:var(--orange-bg);color:var(--orange)}
+.form-group{margin-bottom:.85rem}
+.form-lbl{font-size:.82rem;font-weight:600;color:#444;margin-bottom:4px;display:block}
+.form-inp{width:100%;padding:.65rem .9rem;border:1px solid var(--border);border-radius:8px;font-size:.9rem;background:var(--white);color:#222}
+.form-inp:focus{outline:none;border-color:var(--primary)}
+.form-sel{width:100%;padding:.65rem .9rem;border:1px solid var(--border);border-radius:8px;font-size:.9rem;background:var(--white);color:#222;appearance:none}
+.btn{padding:.75rem 1.2rem;background:var(--primary);color:white;font-size:.88rem;font-weight:700;border:none;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-full{width:100%;justify-content:center;margin-top:.5rem}
+.btn-gold{background:var(--gold);color:var(--primary)}
+.btn-red{background:var(--red);color:white}
+.btn-sm{padding:.4rem .8rem;font-size:.78rem;border:none;border-radius:6px;cursor:pointer;font-weight:600}
+.user-row{display:flex;align-items:center;justify-content:space-between;padding:.65rem .85rem;background:var(--gray);border-radius:8px;margin-bottom:.5rem}
+.user-info{flex:1}
+.user-name{font-size:.88rem;font-weight:700}
+.user-role{font-size:.72rem;color:#777}
+.user-status{font-size:.72rem;margin-top:1px}
+.ab{border-radius:8px;padding:.65rem .85rem;font-size:.82rem;font-weight:600;margin-bottom:.65rem;display:flex;align-items:center;gap:8px}
+.a-ok{background:var(--green-bg);color:var(--green-t)}
+.a-warn{background:var(--orange-bg);color:var(--orange)}
+.a-info{background:#EBF5FB;color:#1A5276}
+.inp-row{display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:.6rem .85rem;margin-bottom:.5rem}
+.inp-lbl{flex:1;font-size:.85rem}
+.inp-field{width:70px;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.9rem;text-align:right;background:var(--gray)}
+.pin-display{font-family:monospace;font-size:1.1rem;font-weight:700;background:var(--primary);color:var(--gold);padding:4px 12px;border-radius:6px;letter-spacing:3px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--primary);color:white;padding:.75rem 1.25rem;border-radius:var(--radius);font-size:.85rem;font-weight:600;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.show{display:flex}
+.modal{background:var(--white);border-radius:var(--radius);padding:1.5rem;width:100%;max-width:400px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:1rem;font-weight:700;color:var(--primary);margin-bottom:1rem}
+.divider{height:1px;background:var(--border);margin:.75rem 0}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div>
+    <div class="topbar-logo">🐔 AviGest</div>
+    <div class="topbar-sub" id="top-nom">Mon espace</div>
+  </div>
+  <div class="user-av" id="user-av" onclick="doLogout()">?</div>
+</div>
+
+<div class="container">
+  <div class="tab-bar">
+    <div class="tab on" onclick="showSec('fermes',this)">🏚️ Mes fermes</div>
+    <div class="tab" onclick="showSec('utilisateurs',this)">👥 Utilisateurs</div>
+    <div class="tab" onclick="showSec('compte',this)">⚙️ Mon compte</div>
+  </div>
+
+  <!-- FERMES -->
+  <div class="section active" id="sec-fermes">
+    <div class="ab a-info"><span>ℹ️</span>Clique sur une ferme pour accéder à l'application</div>
+    <div id="fermes-list"></div>
+    <button class="btn btn-gold btn-full" onclick="showModal('modal-ferme')">➕ Ajouter une ferme</button>
+  </div>
+
+  <!-- UTILISATEURS -->
+  <div class="section" id="sec-utilisateurs">
+    <div class="ab a-info"><span>ℹ️</span>Tu peux donner ou retirer l'accès à tout moment</div>
+    <div class="form-group">
+      <label class="form-lbl">Filtrer par ferme</label>
+      <select class="form-sel" id="filtre-ferme" onchange="renderUsers()">
+        <option value="">Toutes les fermes</option>
+      </select>
+    </div>
+    <div id="users-list"></div>
+    <button class="btn btn-full" onclick="showModal('modal-user')">➕ Ajouter un utilisateur</button>
+  </div>
+
+  <!-- COMPTE -->
+  <div class="section" id="sec-compte">
+    <div class="card">
+      <div class="card-title">Mon profil</div>
+      <div class="inp-row"><span class="inp-lbl">Nom</span><span id="prof-nom" style="font-weight:600"></span></div>
+      <div class="inp-row"><span class="inp-lbl">Email</span><span id="prof-email" style="font-size:.82rem;color:#666"></span></div>
+      <div class="inp-row"><span class="inp-lbl">Téléphone</span><span id="prof-tel" style="font-size:.82rem;color:#666"></span></div>
+      <div class="inp-row"><span class="inp-lbl">Plan</span><span class="badge badge-o" id="prof-plan"></span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Changer le mot de passe</div>
+      <div class="form-group"><label class="form-lbl">Nouveau mot de passe</label><input class="form-inp" type="password" id="new-pwd" placeholder="••••••••"></div>
+      <div class="form-group"><label class="form-lbl">Confirmer</label><input class="form-inp" type="password" id="new-pwd2" placeholder="••••••••"></div>
+      <button class="btn btn-full" onclick="changePwd()">💾 Mettre à jour</button>
+    </div>
+    <button class="btn btn-red btn-full" onclick="doLogout()">🚪 Se déconnecter</button>
+  </div>
+</div>
+
+<!-- MODAL FERME -->
+<div class="modal-overlay" id="modal-ferme">
+  <div class="modal">
+    <div class="modal-title">➕ Nouvelle ferme</div>
+    <div class="form-group"><label class="form-lbl">Nom de la ferme</label><input class="form-inp" type="text" id="ferme-nom" placeholder="Ex: Ferme Loumbila"></div>
+    <div class="form-group"><label class="form-lbl">Localisation</label><input class="form-inp" type="text" id="ferme-loc" placeholder="Ex: Loumbila, Burkina Faso"></div>
+    <div style="display:flex;gap:8px;margin-top:.5rem">
+      <button class="btn btn-full" onclick="saveFerme()">💾 Créer la ferme</button>
+      <button class="btn btn-full" style="background:#888" onclick="hideModal('modal-ferme')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL UTILISATEUR -->
+<div class="modal-overlay" id="modal-user">
+  <div class="modal">
+    <div class="modal-title">➕ Nouvel utilisateur</div>
+    <div class="form-group"><label class="form-lbl">Ferme</label><select class="form-sel" id="user-ferme-sel"></select></div>
+    <div class="form-group"><label class="form-lbl">Nom</label><input class="form-inp" type="text" id="user-nom" placeholder="Ex: Collaborateur 1"></div>
+    <div class="form-group"><label class="form-lbl">Rôle</label>
+      <select class="form-sel" id="user-role">
+        <option value="gestionnaire">👤 Gestionnaire</option>
+        <option value="collaborateur">👷 Collaborateur</option>
+        <option value="partenaire">👁️ Partenaire (lecture seule)</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-lbl">Code PIN (4 chiffres)</label><input class="form-inp" type="tel" id="user-pin" placeholder="Ex: 1234" maxlength="4" pattern="[0-9]{4}"></div>
+    <div class="ab a-info" style="font-size:.78rem;margin-bottom:.75rem"><span>ℹ️</span>Note ce PIN et communique-le à l'utilisateur — il ne sera plus visible après création</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-full" onclick="saveUser()">💾 Créer l'utilisateur</button>
+      <button class="btn btn-full" style="background:#888" onclick="hideModal('modal-user')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DÉTAIL UTILISATEUR -->
+<div class="modal-overlay" id="modal-user-detail">
+  <div class="modal">
+    <div class="modal-title" id="detail-title">Utilisateur</div>
+    <div id="detail-content"></div>
+    <button class="btn btn-full" style="background:#888;margin-top:.75rem" onclick="hideModal('modal-user-detail')">Fermer</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPA_URL='https://zzudpcanpijkhojpygcq.supabase.co';
+const SUPA_KEY='sb_publishable_jzFhUV3gxBkusr2dgkgx8g_k0_XCcFG';
+
+let ELEVEUR=null;
+let FERMES=[];
+let USERS=[];
+
+async function supa(table,method='GET',body=null,params=''){
+  const url=SUPA_URL+'/rest/v1/'+table+params;
+  const h={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
+  if(method!=='GET')h['Prefer']='return=representation';
+  const r=await fetch(url,{method,headers:h,body:body?JSON.stringify(body):null});
+  if(!r.ok){const e=await r.text();console.error(e);return null;}
+  return r.json();
+}
+
+async function hashPin(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function showSec(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  if(id==='utilisateurs')renderUsers();
+}
+
+function showModal(id){document.getElementById(id).classList.add('show');}
+function hideModal(id){document.getElementById(id).classList.remove('show');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+async function init(){
+  const data=sessionStorage.getItem('avigest_eleveur');
+  if(!data){window.location.href='index.html';return;}
+  ELEVEUR=JSON.parse(data);
+  const initials=ELEVEUR.nom.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('user-av').textContent=initials;
+  document.getElementById('top-nom').textContent=ELEVEUR.nom;
+  document.getElementById('prof-nom').textContent=ELEVEUR.nom;
+  document.getElementById('prof-email').textContent=ELEVEUR.email;
+  document.getElementById('prof-tel').textContent=ELEVEUR.telephone||'—';
+  document.getElementById('prof-plan').textContent=ELEVEUR.plan||'test';
+  await loadFermes();
+}
+
+async function loadFermes(){
+  const res=await supa('fermes','GET',null,`?eleveur_id=eq.${ELEVEUR.id}&order=created_at.asc`);
+  FERMES=res||[];
+  renderFermes();
+  updateFermeSels();
+}
+
+function renderFermes(){
+  const z=document.getElementById('fermes-list');
+  if(!FERMES.length){
+    z.innerHTML='<div class="ab a-info"><span>ℹ️</span>Aucune ferme — crée ta première ferme</div>';
+    return;
+  }
+  z.innerHTML=FERMES.map(f=>`
+    <div class="ferme-card" onclick="openFerme(${f.id},'${encodeURIComponent(f.nom)}')">
+      <div>
+        <div class="ferme-name">🏚️ ${f.nom}</div>
+        <div class="ferme-loc">📍 ${f.localisation||'—'}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="badge ${f.actif?'badge-g':'badge-r'}">${f.actif?'Active':'Inactive'}</span>
+        <span style="font-size:1.2rem;color:var(--primary)">›</span>
+      </div>
+    </div>`).join('');
+}
+
+function updateFermeSels(){
+  const opts=FERMES.map(f=>`<option value="${f.id}">${f.nom}</option>`).join('');
+  document.getElementById('filtre-ferme').innerHTML='<option value="">Toutes les fermes</option>'+opts;
+  document.getElementById('user-ferme-sel').innerHTML=opts||'<option value="">Crée d\'abord une ferme</option>';
+}
+
+async function saveFerme(){
+  const nom=document.getElementById('ferme-nom').value.trim();
+  const loc=document.getElementById('ferme-loc').value.trim();
+  if(!nom){showToast('⚠️ Nom de la ferme obligatoire');return;}
+  const res=await supa('fermes','POST',{eleveur_id:ELEVEUR.id,nom,localisation:loc,actif:true});
+  if(!res){showToast('❌ Erreur — réessaie');return;}
+  hideModal('modal-ferme');
+  document.getElementById('ferme-nom').value='';
+  document.getElementById('ferme-loc').value='';
+  showToast('✅ Ferme créée !');
+  await loadFermes();
+}
+
+async function loadUsers(fermeId=null){
+  let params=`?eleveur_id=eq.${ELEVEUR.id}&order=created_at.asc`;
+  if(fermeId)params+=`&ferme_id=eq.${fermeId}`;
+  const res=await supa('utilisateurs','GET',null,params);
+  USERS=res||[];
+}
+
+async function renderUsers(){
+  const fermeId=document.getElementById('filtre-ferme').value;
+  await loadUsers(fermeId||null);
+  const z=document.getElementById('users-list');
+  const roleLabels={gestionnaire:'👤 Gestionnaire',collaborateur:'👷 Collaborateur',partenaire:'👁️ Partenaire'};
+  const roleColors={gestionnaire:'badge-o',collaborateur:'badge-g',partenaire:'badge-g'};
+  if(!USERS.length){z.innerHTML='<div style="color:#888;font-size:.85rem;text-align:center;padding:1rem">Aucun utilisateur</div>';return;}
+  z.innerHTML=USERS.map(u=>{
+    const ferme=FERMES.find(f=>f.id===u.ferme_id);
+    return `<div class="user-row">
+      <div class="user-info">
+        <div class="user-name">${u.nom}</div>
+        <div class="user-role">${ferme?'🏚️ '+ferme.nom:'—'} · <span class="badge ${roleColors[u.role]||'badge-g'}">${roleLabels[u.role]||u.role}</span></div>
+        <div class="user-status" style="color:${u.actif?'var(--green)':'var(--red)'}">${u.actif?'✅ Accès actif':'❌ Accès désactivé'}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;margin-left:8px">
+        ${u.actif
+          ?`<button class="btn-sm" style="background:var(--red);color:white" onclick="toggleUser(${u.id},false)">Désactiver</button>`
+          :`<button class="btn-sm" style="background:var(--green);color:white" onclick="toggleUser(${u.id},true)">Activer</button>`}
+        <button class="btn-sm" style="background:var(--primary);color:var(--gold)" onclick="resetPin(${u.id},'${u.nom}')">🔑 PIN</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function toggleUser(id,actif){
+  const res=await supa('utilisateurs','PATCH',{actif},`?id=eq.${id}`);
+  if(res){showToast(actif?'✅ Accès activé':'✅ Accès désactivé');await renderUsers();}
+}
+
+async function saveUser(){
+  const fermeId=parseInt(document.getElementById('user-ferme-sel').value);
+  const nom=document.getElementById('user-nom').value.trim();
+  const role=document.getElementById('user-role').value;
+  const pin=document.getElementById('user-pin').value.trim();
+  if(!nom||!pin||!fermeId){showToast('⚠️ Tous les champs sont obligatoires');return;}
+  if(!/^\d{4}$/.test(pin)){showToast('⚠️ Le PIN doit être 4 chiffres');return;}
+  const pinHash=await hashPin(pin);
+  const res=await supa('utilisateurs','POST',{ferme_id:fermeId,eleveur_id:ELEVEUR.id,nom,role,pin_hash:pinHash,actif:true});
+  if(!res){showToast('❌ Erreur — réessaie');return;}
+  hideModal('modal-user');
+  document.getElementById('user-nom').value='';
+  document.getElementById('user-pin').value='';
+  showToast('✅ Utilisateur créé !');
+  await renderUsers();
+}
+
+async function resetPin(id,nom){
+  const newPin=prompt(`Nouveau PIN pour ${nom} (4 chiffres) :`);
+  if(!newPin)return;
+  if(!/^\d{4}$/.test(newPin)){showToast('⚠️ PIN invalide — 4 chiffres requis');return;}
+  const pinHash=await hashPin(newPin);
+  const res=await supa('utilisateurs','PATCH',{pin_hash:pinHash},`?id=eq.${id}`);
+  if(res){showToast('✅ PIN mis à jour pour '+nom);}
+}
+
+function openFerme(fermeId,fermeNom){
+  sessionStorage.setItem('avigest_ferme',JSON.stringify({id:fermeId,nom:decodeURIComponent(fermeNom)}));
+  window.location.href='app.html';
+}
+
+async function changePwd(){
+  const pwd=document.getElementById('new-pwd').value;
+  const pwd2=document.getElementById('new-pwd2').value;
+  if(pwd.length<6){showToast('⚠️ Mot de passe trop court');return;}
+  if(pwd!==pwd2){showToast('⚠️ Les mots de passe ne correspondent pas');return;}
+  const hash=await hashPin(pwd);
+  const res=await supa('eleveurs','PATCH',{password_hash:hash},`?id=eq.${ELEVEUR.id}`);
+  if(res){showToast('✅ Mot de passe mis à jour !');}
+}
+
+function doLogout(){
+  sessionStorage.clear();
+  window.location.href='index.html';
+}
+
+init();
+</script>
+</body>
+</html>

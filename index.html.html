@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1B3A2D">
+<title>AviGest — Gestion avicole</title>
+<style>
+:root{
+  --primary:#1B3A2D;--gold:#C9A84C;--red:#C0392B;--green:#1A7A4A;
+  --red-bg:#FDECEA;--green-bg:#E9F7EF;--gray:#F4F4F4;--border:#E0E0E0;
+  --white:#FFF;--font:'Segoe UI',system-ui,sans-serif;--radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:var(--gray);color:#222;min-height:100vh}
+.hero{background:var(--primary);padding:3rem 1.5rem 2rem;text-align:center}
+.hero-logo{font-size:2.5rem;color:var(--gold);font-weight:800;letter-spacing:2px;margin-bottom:4px}
+.hero-sub{color:#9fc;font-size:.9rem;margin-bottom:.5rem}
+.hero-desc{color:#aab;font-size:.82rem;max-width:360px;margin:0 auto}
+.container{max-width:460px;margin:0 auto;padding:1.5rem}
+.card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem}
+.card-title{font-size:1rem;font-weight:700;color:var(--primary);margin-bottom:1.2rem;text-align:center}
+.tabs{display:flex;gap:0;margin-bottom:1.5rem;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.tab{flex:1;padding:.65rem;text-align:center;font-size:.85rem;font-weight:600;cursor:pointer;background:var(--white);color:var(--gray-t);transition:all .15s}
+.tab.on{background:var(--primary);color:var(--gold)}
+.form-group{margin-bottom:1rem}
+.form-lbl{font-size:.82rem;font-weight:600;color:#444;margin-bottom:5px;display:block}
+.form-inp{width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:8px;font-size:.95rem;background:var(--white);color:#222;transition:border .15s}
+.form-inp:focus{outline:none;border-color:var(--primary)}
+.btn{width:100%;padding:.9rem;background:var(--primary);color:white;font-size:1rem;font-weight:700;border:none;border-radius:var(--radius);cursor:pointer;margin-top:.5rem;letter-spacing:.5px}
+.btn:active{opacity:.85}
+.btn-gold{background:var(--gold);color:var(--primary)}
+.err{color:var(--red);font-size:.82rem;margin-top:.5rem;min-height:18px;text-align:center}
+.ok{color:var(--green);font-size:.82rem;margin-top:.5rem;text-align:center}
+.divider{text-align:center;color:#aaa;font-size:.8rem;margin:1rem 0;position:relative}
+.divider:before{content:'';position:absolute;left:0;top:50%;width:100%;height:1px;background:var(--border)}
+.divider span{background:var(--white);padding:0 1rem;position:relative}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:1rem}
+.feat{background:var(--gray);border-radius:8px;padding:.75rem;text-align:center}
+.feat-icon{font-size:1.5rem;margin-bottom:4px}
+.feat-txt{font-size:.75rem;color:#555;font-weight:500}
+.spinner{display:none;width:20px;height:20px;border:2px solid #fff3;border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-logo">🐔 AviGest</div>
+  <div class="hero-sub">Gestion avicole professionnelle</div>
+  <div class="hero-desc">Suivez vos bandes, gérez vos fermes et pilotez votre rentabilité en temps réel</div>
+</div>
+
+<div class="container">
+  <div class="card">
+    <div class="tabs">
+      <div class="tab on" id="tab-conn" onclick="showTab('connexion')">🔑 Connexion</div>
+      <div class="tab" id="tab-insc" onclick="showTab('inscription')">📝 Inscription</div>
+    </div>
+
+    <!-- CONNEXION -->
+    <div id="form-connexion">
+      <div class="card-title">Bienvenue</div>
+      <div class="form-group">
+        <label class="form-lbl">Email</label>
+        <input class="form-inp" type="email" id="conn-email" placeholder="votre@email.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-lbl">Mot de passe</label>
+        <input class="form-inp" type="password" id="conn-pwd" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <div class="err" id="conn-err"></div>
+      <button class="btn" onclick="doConnexion()">Se connecter</button>
+      <div class="spinner" id="conn-spin"></div>
+    </div>
+
+    <!-- INSCRIPTION -->
+    <div id="form-inscription" style="display:none">
+      <div class="card-title">Créer un compte</div>
+      <div class="form-group">
+        <label class="form-lbl">Nom complet</label>
+        <input class="form-inp" type="text" id="ins-nom" placeholder="Adama Ky">
+      </div>
+      <div class="form-group">
+        <label class="form-lbl">Email</label>
+        <input class="form-inp" type="email" id="ins-email" placeholder="votre@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-lbl">Téléphone</label>
+        <input class="form-inp" type="tel" id="ins-tel" placeholder="+226 XX XX XX XX">
+      </div>
+      <div class="form-group">
+        <label class="form-lbl">Mot de passe (6 caractères minimum)</label>
+        <input class="form-inp" type="password" id="ins-pwd" placeholder="••••••••">
+      </div>
+      <div class="form-group">
+        <label class="form-lbl">Confirmer le mot de passe</label>
+        <input class="form-inp" type="password" id="ins-pwd2" placeholder="••••••••">
+      </div>
+      <div class="err" id="ins-err"></div>
+      <div class="ok" id="ins-ok"></div>
+      <button class="btn btn-gold" onclick="doInscription()">Créer mon compte</button>
+      <div class="spinner" id="ins-spin"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="font-size:.85rem;font-weight:700;color:var(--primary);margin-bottom:.75rem">Pourquoi AviGest ?</div>
+    <div class="feat-grid">
+      <div class="feat"><div class="feat-icon">📊</div><div class="feat-txt">Tableau de bord temps réel</div></div>
+      <div class="feat"><div class="feat-icon">💰</div><div class="feat-txt">Coût de revient automatique</div></div>
+      <div class="feat"><div class="feat-icon">💉</div><div class="feat-txt">Protocole vaccinal avec alertes</div></div>
+      <div class="feat"><div class="feat-icon">👥</div><div class="feat-txt">Multi-utilisateurs sécurisé</div></div>
+      <div class="feat"><div class="feat-icon">🏚️</div><div class="feat-txt">Multi-fermes</div></div>
+      <div class="feat"><div class="feat-icon">📱</div><div class="feat-txt">Mobile et hors ligne</div></div>
+    </div>
+  </div>
+  <div style="text-align:center;font-size:.72rem;color:#aaa;padding-bottom:1rem">AviGest © 2026 · Ouagadougou · Burkina Faso</div>
+</div>
+
+<script>
+const SUPA_URL='https://zzudpcanpijkhojpygcq.supabase.co';
+const SUPA_KEY='sb_publishable_jzFhUV3gxBkusr2dgkgx8g_k0_XCcFG';
+
+async function supa(table,method='GET',body=null,params=''){
+  const url=SUPA_URL+'/rest/v1/'+table+params;
+  const h={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
+  if(method!=='GET')h['Prefer']='return=representation';
+  const r=await fetch(url,{method,headers:h,body:body?JSON.stringify(body):null});
+  return r.ok?r.json():null;
+}
+
+// Simple hash function (for demo — in production use bcrypt server-side)
+async function hashPin(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function showTab(t){
+  document.getElementById('form-connexion').style.display=t==='connexion'?'block':'none';
+  document.getElementById('form-inscription').style.display=t==='inscription'?'block':'none';
+  document.getElementById('tab-conn').classList.toggle('on',t==='connexion');
+  document.getElementById('tab-insc').classList.toggle('on',t==='inscription');
+}
+
+// Anti-bruteforce connexion éleveur
+function checkBlockedEmail(email) {
+  const key = 'blk_' + btoa(email).slice(0,20);
+  const data = localStorage.getItem(key);
+  if (!data) return false;
+  const {count, time} = JSON.parse(data);
+  if (count >= 5) {
+    const elapsed = Date.now() - time;
+    if (elapsed < 1800000) return Math.ceil((1800000 - elapsed) / 60000);
+    else { localStorage.removeItem(key); return false; }
+  }
+  return false;
+}
+function recordFailEmail(email) {
+  const key = 'blk_' + btoa(email).slice(0,20);
+  const data = localStorage.getItem(key);
+  let count = data ? JSON.parse(data).count + 1 : 1;
+  localStorage.setItem(key, JSON.stringify({count, time: Date.now()}));
+  return 5 - count;
+}
+function resetEmail(email) { localStorage.removeItem('blk_' + btoa(email).slice(0,20)); }
+
+async function doConnexion(){
+  const email=document.getElementById('conn-email').value.trim().toLowerCase();
+  const pwd=document.getElementById('conn-pwd').value;
+  const err=document.getElementById('conn-err');
+  err.textContent='';
+  if(!email||!pwd){err.textContent='⚠️ Remplis tous les champs';return;}
+  const blocked=checkBlockedEmail(email);
+  if(blocked){err.textContent='🔒 Accès bloqué — réessaie dans '+blocked+' min';return;}
+  document.getElementById('conn-spin').style.display='block';
+  try{
+    const hash=await hashPin(pwd);
+    const res=await supa('eleveurs','GET',null,`?email=eq.${encodeURIComponent(email)}&password_hash=eq.${hash}&select=*`);
+    if(!res||!res.length){
+      const rem=recordFailEmail(email);
+      err.textContent=rem<=0?'🔒 Trop de tentatives — bloqué 30 min':'❌ Email ou mot de passe incorrect — '+rem+' tentative(s) restante(s)';
+      document.getElementById('conn-spin').style.display='none';return;
+    }
+    const eleveur=res[0];
+    if(!eleveur.actif){err.textContent='❌ Compte désactivé — contacter le support';document.getElementById('conn-spin').style.display='none';return;}
+    resetEmail(email);
+    sessionStorage.setItem('avigest_eleveur',JSON.stringify(eleveur));
+    window.location.href='dashboard.html';
+  }catch(e){err.textContent='❌ Erreur de connexion — vérifier internet';document.getElementById('conn-spin').style.display='none';}
+}
+
+async function doInscription(){
+  const nom=document.getElementById('ins-nom').value.trim();
+  const email=document.getElementById('ins-email').value.trim().toLowerCase();
+  const tel=document.getElementById('ins-tel').value.trim();
+  const pwd=document.getElementById('ins-pwd').value;
+  const pwd2=document.getElementById('ins-pwd2').value;
+  const err=document.getElementById('ins-err');
+  const ok=document.getElementById('ins-ok');
+  err.textContent='';ok.textContent='';
+  if(!nom||!email||!pwd){err.textContent='⚠️ Nom, email et mot de passe obligatoires';return;}
+  if(pwd.length<6){err.textContent='⚠️ Mot de passe trop court (6 caractères minimum)';return;}
+  if(pwd!==pwd2){err.textContent='⚠️ Les mots de passe ne correspondent pas';return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){err.textContent='⚠️ Email invalide';return;}
+  document.getElementById('ins-spin').style.display='block';
+  try{
+    const hash=await hashPin(pwd);
+    const res=await supa('eleveurs','POST',{email,password_hash:hash,nom,telephone:tel,actif:true,plan:'test'});
+    if(!res){err.textContent='❌ Email déjà utilisé ou erreur serveur';document.getElementById('ins-spin').style.display='none';return;}
+    ok.textContent='✅ Compte créé ! Connexion en cours...';
+    setTimeout(()=>{
+      sessionStorage.setItem('avigest_eleveur',JSON.stringify(Array.isArray(res)?res[0]:res));
+      window.location.href='dashboard.html';
+    },1200);
+  }catch(e){err.textContent='❌ Erreur — vérifier internet';document.getElementById('ins-spin').style.display='none';}
+}
+
+// Enter key support
+document.addEventListener('keydown',e=>{if(e.key==='Enter'){const t=document.getElementById('tab-conn').classList.contains('on');t?doConnexion():doInscription();}});
+
+// Check already logged in
+if(sessionStorage.getItem('avigest_eleveur'))window.location.href='dashboard.html';
+</script>
+</body>
+</html>
